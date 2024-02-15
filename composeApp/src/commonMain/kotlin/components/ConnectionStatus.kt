@@ -2,7 +2,6 @@ package components
 
 import WIFI_PASSWORD
 import WIFI_SSID_PREFIX
-import printService.WifiManager
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -34,8 +33,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import utils.getContext
 import kotlinx.coroutines.launch
+import printService.WifiManager
+import utils.getContext
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

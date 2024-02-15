@@ -1,10 +1,8 @@
 package screens
 
 import MEMOBIRD_URL
-import utils.RequirePermissions
 import WIFI_PASSWORD
 import WIFI_SSID_PREFIX
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -15,9 +13,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.requiredHeight
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
@@ -44,23 +39,20 @@ import components.ImageForm
 import components.OtherForm
 import components.TextForm
 import compose.icons.TablerIcons
-import compose.icons.tablericons.Dots
-import compose.icons.tablericons.DotsCircleHorizontal
-import compose.icons.tablericons.DotsVertical
-import compose.icons.tablericons.File
 import compose.icons.tablericons.FileText
 import compose.icons.tablericons.Help
 import compose.icons.tablericons.Photo
 import compose.icons.tablericons.Printer
 import compose.icons.tablericons.Typography
-import utils.getContext
-import printService.getWifiManager
 import kotlinx.coroutines.launch
 import printService.HttpPrinter
 import printService.PrintRequest
-import utils.showToast
+import printService.getWifiManager
 import ui.SegmentedButtonItem
 import ui.SegmentedButtons
+import utils.RequirePermissions
+import utils.getContext
+import utils.showToast
 
 object PrintScreen : Screen {
 
