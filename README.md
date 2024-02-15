@@ -5,6 +5,9 @@ Unofficial app for Memobird G2 inkless printer
 I found a Memobird printer laying around, and it turned out the original app is not working anymore. So, I decided to create the app myself for fun. 
 Simultaneously I learned Kotlin and [Compose Multiplatform](https://www.jetbrains.com/lp/compose-multiplatform/) from scratch.
 
+## Download
+[Download APK](https://github.com/jakub-lat/memobird-app/releases/latest)
+
 ## How it works
 On Android, it uses a [temporary Wi-Fi connection](https://developer.android.com/develop/connectivity/wifi/wifi-bootstrap) to communicate with the printer - iOS isn't supported as for now.
 Shout out to [LeMinaw/openmemobird](https://github.com/LeMinaw/openmemobird) for providing Memobird API "docs".
