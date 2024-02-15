@@ -137,7 +137,9 @@ fun ImageForm(onValueChange: (el: PrintRequest) -> Unit) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         if (isUploadLoading) {
-            CircularProgressIndicator()
+            Box(Modifier.fillMaxHeight().padding(bottom = 150.dp), Alignment.Center) {
+                CircularProgressIndicator()
+            }
             return
         }
 

@@ -47,6 +47,10 @@ kotlin {
             implementation("com.darkrockstudios:mpfilepicker:3.1.0")
             implementation("br.com.devsrsouza.compose.icons:tabler-icons:1.1.0")
             implementation("com.mohamedrejeb.richeditor:richeditor-compose:1.0.0-rc01")
+
+            val voyagerVersion = "1.0.0"
+            implementation("cafe.adriel.voyager:voyager-navigator:$voyagerVersion")
+            implementation("cafe.adriel.voyager:voyager-transitions:$voyagerVersion")
         }
     }
 }
