@@ -35,12 +35,13 @@ fun OtherForm(onValueChange: (request: PrintRequest) -> Unit) {
             SegmentedButtonItem(
                 selected = selectedIndex == 1,
                 onClick = { selectedIndex = 1 },
-                label = { Text("Something else") },
+                label = { Text("More") },
             )
         }
         Spacer(Modifier.height(20.dp))
         when (selectedIndex) {
             0 -> QRCodeForm(onValueChange)
+            1 -> Text("TODO")
         }
     }
 
