@@ -48,7 +48,7 @@ def process_image():
     if rotate != 0:
         img = img.rotate(rotate, expand=True)
 
-    # img = img.transpose(Image.FLIP_TOP_BOTTOM)
+    img = img.rotate(180)
     
     img = apply_filter(img, img_filter)
 
