@@ -1,0 +1,12 @@
+{
+    "configurations": [
+        {
+            "name": "composeApp",
+            "type": "android-app",
+            "workingDir": "D:\\Projects\\personal\\MemobirdApp",
+            "allowParallelRun": true,
+            "module": "MemobirdApp.composeApp.main",
+            "destination": "RFCX10K90DF"
+        }
+    ]
+}
