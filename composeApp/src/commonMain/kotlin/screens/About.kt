@@ -64,7 +64,7 @@ object AboutScreen : Screen {
                     Spacer(Modifier.height(20.dp))
                     Text("Made with Compose Multiplatform.", textAlign = TextAlign.Center, style = MaterialTheme.typography.bodyMedium)
                     Spacer(Modifier.height(7.dp))
-                    Text("Based on LeMinaw/openmemobird.", textAlign = TextAlign.Center, style = MaterialTheme.typography.bodyMedium)
+                    Text("Special thanks to LeMinaw/openmemobird.", textAlign = TextAlign.Center, style = MaterialTheme.typography.bodyMedium)
                     Spacer(Modifier.height(30.dp))
                     FilledTonalButton(onClick = {
                         uriHandler.openUri("https://github.com/jakub-lat/memobird-app")
