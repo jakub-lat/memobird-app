@@ -31,12 +31,18 @@ data class TextElement(
     private val underlineInt: Int,
     override val printType: Int = 1
 ) : PrintElement() {
+    var isEmpty = encodedText == ""
+        private set
+
     constructor(text: String, big: Boolean, bold: Boolean, underline: Boolean) : this(
         encodedText = Base64.encode(text.encodeToByteArray()),
         fontSize = 1 + boolToInt(big),
         boldInt = boolToInt(bold),
         underlineInt = boolToInt(underline),
-    )
+    ) {
+        println(text)
+        isEmpty = text.isBlank()
+    }
 }
 
 @OptIn(ExperimentalEncodingApi::class)
@@ -78,7 +84,7 @@ data class PrintDocument(
 }
 
 @Serializable
-data class PrintRequest(val elements: List<PrintElement>, val separate: Boolean = false) {
+data class PrintRequest(val elements: List<PrintElement> = listOf(), val separate: Boolean = false) {
     suspend fun print(service: PrintService) {
         if (separate) {
             for ((i, element) in elements.withIndex()) {
@@ -88,4 +94,8 @@ data class PrintRequest(val elements: List<PrintElement>, val separate: Boolean 
             service.print(PrintDocument(elements))
         }
     }
+
+    val isEmpty: Boolean
+        get() = elements.isEmpty()
+                || (elements.size == 1 && (elements.first() is TextElement) && (elements.first() as TextElement).isEmpty)
 }

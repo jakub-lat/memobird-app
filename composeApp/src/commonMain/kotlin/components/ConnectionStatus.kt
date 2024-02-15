@@ -2,7 +2,7 @@ package components
 
 import WIFI_PASSWORD
 import WIFI_SSID_PREFIX
-import WifiManager
+import printService.WifiManager
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Circle
-import androidx.compose.material.icons.filled.FiberManualRecord
 import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.Button
 import androidx.compose.material3.ElevatedAssistChip
@@ -25,8 +24,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.asIntState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -36,13 +33,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import getContext
-import kotlinx.coroutines.flow.StateFlow
+import utils.getContext
 import kotlinx.coroutines.launch
-import showToast
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -112,7 +105,7 @@ fun ConnectionStatus(wifi: WifiManager) {
                     Text("No device connected", style = MaterialTheme.typography.headlineSmall)
                     Spacer(Modifier.height(30.dp))
                     Button(onClick = { connect() }) {
-                        Text("Connect Memobird")
+                        Text("Connect to Memobird")
                     }
                 }
             }

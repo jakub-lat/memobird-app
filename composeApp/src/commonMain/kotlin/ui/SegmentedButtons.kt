@@ -7,6 +7,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -143,7 +144,8 @@ fun SegmentedButtonItem(
     label: @Composable (() -> Unit)? = null,
     icon: @Composable (() -> Unit)? = null,
     colors: SegmentedButtonColors = SegmentedButtonsDefaults.colors(),
-    textStyle: TextStyle = MaterialTheme.typography.labelLarge
+    textStyle: TextStyle = MaterialTheme.typography.labelLarge,
+    contentPadding: PaddingValues = PaddingValues(12.dp)
 ) {
     val styledLabel: @Composable (() -> Unit)? =
         label?.let {
@@ -182,7 +184,7 @@ fun SegmentedButtonItem(
             .background(
                 color = colors.indicatorColor.copy(alpha = animationProgress),
             )
-            .padding(12.dp),
+            .padding(contentPadding),
         contentAlignment = Alignment.Center
     ) {
         Row(

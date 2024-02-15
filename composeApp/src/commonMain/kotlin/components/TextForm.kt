@@ -3,6 +3,7 @@ package components
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -31,19 +32,23 @@ val BigFontSize = 28.sp
 fun TextForm(onValueChange: (request: PrintRequest) -> Unit) {
     val state = rememberRichTextState()
 
+    LaunchedEffect(Unit) {
+        onValueChange(PrintRequest())
+    }
+
     LaunchedEffect(state.annotatedString) {
         val elements = richTextToPrintElements(state)
         onValueChange(PrintRequest(elements))
     }
 
-
     Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(5.dp)) {
         OutlinedRichTextEditor(
             state = state,
             modifier = Modifier.fillMaxWidth(),
-            minLines = 3,
-            maxLines = 5,
+            minLines = 5,
+            maxLines = 10,
             label = { Text("Enter text..") },
+            shape = RoundedCornerShape(15.dp)
         )
         RichTextStyleRow(
             state = state,

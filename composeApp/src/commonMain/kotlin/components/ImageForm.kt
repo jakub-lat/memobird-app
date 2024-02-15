@@ -3,7 +3,7 @@
 package components
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -13,13 +13,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Button
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
+import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -39,6 +40,7 @@ import androidx.compose.ui.graphics.colorspace.ColorSpaces
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.toLowerCase
 import androidx.compose.ui.unit.dp
 import com.darkrockstudios.libraries.mpfilepicker.FilePicker
 import compose.icons.TablerIcons
@@ -46,22 +48,24 @@ import compose.icons.tablericons.CameraPlus
 import imageService.processImage
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.launch
-import getFileLoader
+import utils.getFileLoader
 import printService.ImageElement
-import printService.PrintElement
 import kotlin.io.encoding.ExperimentalEncodingApi
-import getContext
+import utils.getContext
 import imageService.ImageOptions
 import imageService.ProcessResponse
+import imageService.generateProcessedImagePreview
 import imageService.uploadImage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import printService.PrintRequest
-import showToast
+import ui.DropdownMenu
+import utils.showToast
 import ui.SwitchGroup
 import kotlin.math.roundToInt
 
 val HEIGHT_RANGE = 50f..2000f
+val FILTERS = listOf("No filter", "Contrast", "Contour", "Emboss", "Smooth", "Smooth more", "Edge enhance", "Edge enhance more", "Find edges", "Sharpen")
 const val MAX_SIZE = 384
 
 @OptIn(DelicateCoroutinesApi::class)
@@ -71,6 +75,8 @@ fun ImageForm(onValueChange: (el: PrintRequest) -> Unit) {
     var keepAspectRatio by remember { mutableStateOf(true) }
     var customHeight by remember { mutableStateOf(MAX_SIZE.toFloat()) }
     var rotateRight by remember { mutableStateOf(false) }
+    var filterIndex by remember { mutableStateOf(0) }
+    var invert by remember { mutableStateOf(false) }
 
     var uploadedUuid by remember { mutableStateOf<String?>(null) }
     var imagePreview by remember { mutableStateOf<ImageBitmap?>(null) }
@@ -83,6 +89,10 @@ fun ImageForm(onValueChange: (el: PrintRequest) -> Unit) {
     val loadFile = getFileLoader()
 
     val painter = BitmapPainter(imagePreview ?: ImageBitmap(1, 1))
+
+    LaunchedEffect(Unit) {
+        onValueChange(PrintRequest())
+    }
 
     fun onFileChanged(path: String) {
         coroutineScope.launch {
@@ -104,8 +114,9 @@ fun ImageForm(onValueChange: (el: PrintRequest) -> Unit) {
         isPreviewLoading = true
 
         try {
-            val response = processImage(uploadedUuid!!, ImageOptions(if (rotateRight) 90 else 0, keepAspectRatio, customHeight))
-            imagePreview = constructProcessedImage(response)
+            val options = ImageOptions(if (rotateRight) 90 else 0, keepAspectRatio, customHeight, FILTERS[filterIndex].lowercase(), invert)
+            val response = processImage(uploadedUuid!!, options)
+            imagePreview = generateProcessedImagePreview(response)
 
             val elements = response.chunksBase64.map { ImageElement(it) }.reversed()
             onValueChange(PrintRequest(elements, true))
@@ -118,7 +129,7 @@ fun ImageForm(onValueChange: (el: PrintRequest) -> Unit) {
         isPreviewLoading = false
     }
 
-    LaunchedEffect(keepAspectRatio, uploadedUuid, customHeight, rotateRight) {
+    LaunchedEffect(keepAspectRatio, uploadedUuid, customHeight, rotateRight, filterIndex, invert) {
         coroutineScope.launch {
             updateImage()
         }
@@ -133,7 +144,7 @@ fun ImageForm(onValueChange: (el: PrintRequest) -> Unit) {
 
 
     Column(
-        Modifier.fillMaxHeight().padding(top = 20.dp),
+        Modifier.fillMaxHeight().padding(top = 10.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         if (isUploadLoading) {
@@ -154,7 +165,13 @@ fun ImageForm(onValueChange: (el: PrintRequest) -> Unit) {
             return
         }
 
-        Box(Modifier.fillMaxWidth().height(200.dp), contentAlignment = Alignment.Center) {
+        Box(
+            Modifier.fillMaxWidth()
+                .height(200.dp)
+                .background(MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp), RoundedCornerShape(20.dp))
+                .padding(10.dp),
+            contentAlignment = Alignment.Center
+        ) {
             if (isPreviewLoading) {
                 CircularProgressIndicator()
             } else if (imagePreview != null) {
@@ -167,47 +184,20 @@ fun ImageForm(onValueChange: (el: PrintRequest) -> Unit) {
             }
         }
 
-        Spacer(Modifier.height(20.dp))
+        Spacer(Modifier.height(15.dp))
         FilledTonalButton(onClick = { showFilePicker = true }) {
             Text("Change image")
         }
-        Spacer(Modifier.height(20.dp))
-        SwitchGroup(rotateRight, { v -> rotateRight = v }, { Text("Rotate 90deg") })
+        Spacer(Modifier.height(15.dp))
+        SwitchGroup(rotateRight, { v -> rotateRight = v }, { Text("Rotate 90 deg") })
         SwitchGroup(keepAspectRatio, { v -> keepAspectRatio = v }, { Text("Keep aspect ratio") })
         if (!keepAspectRatio) {
             Slider(customHeight, { v -> customHeight = v }, valueRange = HEIGHT_RANGE, steps = 100)
             Text("Height: ${customHeight.roundToInt()}", textAlign = TextAlign.Center, style = MaterialTheme.typography.bodySmall)
         }
+        SwitchGroup(invert, { v -> invert = v }, { Text("Invert") })
+        Spacer(Modifier.height(5.dp))
+        DropdownMenu(filterIndex, { v -> filterIndex = v }, FILTERS, { Text("Filter") }, Modifier.fillMaxWidth())
     }
 }
 
-suspend fun constructProcessedImage(data: ProcessResponse): ImageBitmap = withContext(Dispatchers.Default) {
-        val img = ImageBitmap(
-                data.width,
-                data.height,
-                ImageBitmapConfig.Argb8888,
-                false,
-                ColorSpaces.Srgb
-            )
-        val canvas = Canvas(img)
-
-        for (y in 0 until data.height) {
-            for (x in 0 until data.width) {
-                val color = if (data.pixels[y][x]) Color.Black else Color.White
-                val paint = Paint().apply {
-                    this.color = color
-                    style = PaintingStyle.Fill
-                }
-
-                canvas.drawRect(
-                    x.toFloat(),
-                    data.height - y.toFloat() - 1,
-                    (x + 1).toFloat(),
-                    data.height - y.toFloat(),
-                    paint
-                )
-            }
-        }
-
-        return@withContext img
-    }

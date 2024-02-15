@@ -1,21 +1,23 @@
 package screens
 
 import MEMOBIRD_URL
-import RequirePermissions
+import utils.RequirePermissions
 import WIFI_PASSWORD
 import WIFI_SSID_PREFIX
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Info
+import androidx.compose.foundation.layout.requiredHeight
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
@@ -39,17 +41,24 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import components.ConnectionStatus
 import components.ImageForm
+import components.OtherForm
 import components.TextForm
 import compose.icons.TablerIcons
+import compose.icons.tablericons.Dots
+import compose.icons.tablericons.DotsCircleHorizontal
+import compose.icons.tablericons.DotsVertical
+import compose.icons.tablericons.File
+import compose.icons.tablericons.FileText
+import compose.icons.tablericons.Help
 import compose.icons.tablericons.Photo
 import compose.icons.tablericons.Printer
 import compose.icons.tablericons.Typography
-import getContext
-import getWifiManager
+import utils.getContext
+import printService.getWifiManager
 import kotlinx.coroutines.launch
 import printService.HttpPrinter
 import printService.PrintRequest
-import showToast
+import utils.showToast
 import ui.SegmentedButtonItem
 import ui.SegmentedButtons
 
@@ -87,6 +96,10 @@ object PrintScreen : Screen {
             }
         }
 
+        fun onValueChange(v: PrintRequest) {
+            request = v
+        }
+
         RequirePermissions(grantButton = { onClick ->
             Box(Modifier.fillMaxSize(), Alignment.Center) {
                 Button(onClick) {
@@ -100,18 +113,19 @@ object PrintScreen : Screen {
                         title = { Text("Memobird") },
                         actions = {
                             ConnectionStatus(wifi)
-//                            Spacer(Modifier.width(10.dp))
                             IconButton(
                                 onClick = {
-                                    navigator.push(InfoScreen)
-                                }
+                                    navigator.push(AboutScreen)
+                                },
                             ) {
-                                Icon(Icons.Default.Info, "info")
+                                Icon(TablerIcons.Help, "About app")
                             }
                         }
                     )
                 },
                 floatingActionButton = {
+                    if (request.isEmpty) return@Scaffold
+
                     ExtendedFloatingActionButton(
                         modifier = Modifier
                             .padding(16.dp)
@@ -126,8 +140,8 @@ object PrintScreen : Screen {
             ) { innerPadding ->
                 Box(Modifier.padding(innerPadding)) {
                     Column(
-                        Modifier.fillMaxWidth().padding(20.dp, 20.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
+                        Modifier.fillMaxWidth().fillMaxHeight().padding(20.dp, 20.dp, 20.dp, 0.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
                         SegmentedButtons {
                             SegmentedButtonItem(
@@ -142,13 +156,19 @@ object PrintScreen : Screen {
                                 label = { Text("Image") },
                                 icon = { Icon(TablerIcons.Photo, "Image") },
                             )
+                            SegmentedButtonItem(
+                                selected = selectedIndex == 2,
+                                onClick = { selectedIndex = 2 },
+                                label = { Text("Other") },
+                                icon = { Icon(TablerIcons.FileText, "Image") },
+                            )
                         }
-                        Spacer(Modifier.height(20.dp))
+                        Spacer(Modifier.height(15.dp))
                         when (selectedIndex) {
-                            0 -> TextForm(onValueChange = { v -> request = v })
-                            1 -> ImageForm(onValueChange = { v -> request = v })
+                            0 -> TextForm(::onValueChange)
+                            1 -> ImageForm(::onValueChange)
+                            2 -> OtherForm(::onValueChange)
                         }
-                        Spacer(Modifier.height(50.dp))
                     }
                 }
             }

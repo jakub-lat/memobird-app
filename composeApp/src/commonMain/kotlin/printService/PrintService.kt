@@ -2,9 +2,6 @@ package printService
 
 import fuel.Fuel
 import fuel.post
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
-import showToast
 
 interface PrintService {
     suspend fun print(document: PrintDocument);

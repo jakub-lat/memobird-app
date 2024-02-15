@@ -33,6 +33,10 @@ kotlin {
             implementation(libs.androidx.activity.compose)
             implementation("com.github.bumptech.glide:compose:1.0.0-beta01")
             implementation("com.google.accompanist:accompanist-permissions:0.23.1")
+            implementation("io.ktor:ktor-client-okhttp:2.3.7")
+        }
+        iosMain.dependencies {
+            implementation("io.ktor:ktor-client-darwin:2.3.7")
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -47,10 +51,17 @@ kotlin {
             implementation("com.darkrockstudios:mpfilepicker:3.1.0")
             implementation("br.com.devsrsouza.compose.icons:tabler-icons:1.1.0")
             implementation("com.mohamedrejeb.richeditor:richeditor-compose:1.0.0-rc01")
+            implementation("io.github.g0dkar:qrcode-kotlin:4.1.1")
 
             val voyagerVersion = "1.0.0"
             implementation("cafe.adriel.voyager:voyager-navigator:$voyagerVersion")
             implementation("cafe.adriel.voyager:voyager-transitions:$voyagerVersion")
+
+//            implementation("io.coil-kt.coil3:coil:3.0.0-SNAPSHOT")
+//            implementation("io.coil-kt.coil3:coil-network:3.0.0-SNAPSHOT")
+            implementation("io.coil-kt.coil3:coil:3.0.0-alpha01")
+            implementation("io.coil-kt.coil3:coil-compose:3.0.0-alpha01")
+//            implementation("io.coil-kt.coil3:coil-network-ktor:3.0.0-alpha01")
         }
     }
 }
