@@ -53,14 +53,14 @@ class AndroidWifiManager(private val context: Context) : WifiManager {
             .setNetworkSpecifier(specifier)
             .build()
 
-        suspendCancellableCoroutine<Unit> { continuation ->
+        return suspendCancellableCoroutine { continuation ->
             networkCallback = @RequiresApi(VERSION_CODES.S) object : ConnectivityManager.NetworkCallback(FLAG_INCLUDE_LOCATION_INFO) {
                 override fun onAvailable(network: Network) {
                     super.onAvailable(network)
                     _state.value = _state.value.copy(isConnected = true)
                     this@AndroidWifiManager.network = network
 
-                    if(continuation.isActive) {
+                    if (continuation.isActive) {
                         continuation.resume(Unit)
                     }
                 }
@@ -69,7 +69,7 @@ class AndroidWifiManager(private val context: Context) : WifiManager {
                     super.onUnavailable()
                     resetAll()
 
-                    if(continuation.isActive) {
+                    if (continuation.isActive) {
                         continuation.cancel(Exception("Failed to connect to Memobird Wi-Fi"))
                     }
                 }
@@ -111,16 +111,14 @@ class AndroidWifiManager(private val context: Context) : WifiManager {
         _state.value = _state.value.copy(isBound = false)
     }
 
-    override suspend fun disconnect() {
-        if (networkCallback != null) {
-            connectivityManager.unregisterNetworkCallback(networkCallback!!)
-        }
-        resetAll()
-    }
+    override suspend fun disconnect() = resetAll()
 
     private fun resetAll() {
         _state.value = WifiState()
         network = null
+        if (networkCallback != null) {
+            connectivityManager.unregisterNetworkCallback(networkCallback!!)
+        }
         networkCallback = null
     }
 }
